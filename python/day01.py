@@ -65,7 +65,7 @@ def get_sum_calibration_values(dat: List[str], mode: str = "part1") -> int:
 
 assert get_sum_calibration_values(sample_input1) == 142
 
-puzzle_input = ("".join([_ for _ in fileinput.input()])).split("\n")
+puzzle_input = [line.rstrip() for line in fileinput.input()]
 solution_part1 = get_sum_calibration_values(puzzle_input)
 
 assert solution_part1 == 54916

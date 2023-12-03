@@ -65,7 +65,7 @@ def find_possible_games(games):
 assert sum(find_possible_games(detect_games(sample_input1))) == 8
 assert sum(find_possible_games(detect_games(sample_input2))) == 3
 
-puzzle_input = ("".join([_ for _ in fileinput.input()])).split("\n")
+puzzle_input = [line.rstrip() for line in fileinput.input()]
 solution_part1 = sum(find_possible_games(detect_games(puzzle_input)))
 
 assert solution_part1 == 2237
