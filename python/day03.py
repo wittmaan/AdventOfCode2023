@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from re import finditer
 from typing import List, Dict
 
+ASTERISK = "*"
 PERIOD = '.'
 
 sample_input = """467..114..
@@ -52,6 +53,19 @@ class Schematic:
                     break
         return sum(result)
 
+    def sum_gear_ratios(self):
+        result = []
+        for symbol_coordinate, symbol_value in self.symbols.items():
+            if symbol_value == ASTERISK:
+                possible_numbers = []
+                for number in self.numbers:
+                    if number.is_adjacent_to_symbol(symbol_coordinate):
+                        possible_numbers.append(number)
+                if len(possible_numbers) == 2:
+                    result.append(possible_numbers[0].val * possible_numbers[1].val)
+
+        return sum(result)
+
 
 def fill(schematic_input: List[str]):
     numbers: List[Number] = []
@@ -79,12 +93,10 @@ solution_part1 = Schematic(*fill(schematic_input=puzzle_input)).sum_part_number(
 assert solution_part1 == 535078
 print(f"solution part1: {solution_part1}")
 
-
 # # --- Part two ---
 
+assert Schematic(*fill(schematic_input=sample_input)).sum_gear_ratios() == 467835
 
-# assert find_fewest_games(detect_games(sample_input)) == 2286
-#
-# solution_part2 = find_fewest_games(detect_games(puzzle_input))
-# assert solution_part2 == 66681
-# print(f"solution part2: {solution_part2}")
+solution_part2 = Schematic(*fill(schematic_input=puzzle_input)).sum_gear_ratios()
+assert solution_part2 == 75312571
+print(f"solution part2: {solution_part2}")
