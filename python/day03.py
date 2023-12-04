@@ -34,9 +34,10 @@ class Number:
     val: int
 
     def is_adjacent_to_symbol(self, symbol: Coordinate):
-        x_range = range(self.start.x - 1, self.end.x + 2)
-        y_range = range(self.start.y - 1, self.start.y + 2)
-        return symbol.x in x_range and symbol.y in y_range
+        return (
+                self.start.x - 1 <= symbol.x <= self.end.x + 1
+                and self.start.y - 1 <= symbol.y <= self.start.y + 1
+        )
 
 
 @dataclass
@@ -45,13 +46,11 @@ class Schematic:
     symbols: Dict[Coordinate, str]
 
     def sum_part_number(self):
-        result = []
-        for number in self.numbers:
-            for symbol in self.symbols:
-                if number.is_adjacent_to_symbol(symbol):
-                    result.append(number.val)
-                    break
-        return sum(result)
+        return sum(
+            number.val
+            for number in self.numbers
+            if any(number.is_adjacent_to_symbol(symbol) for symbol in set(self.symbols.keys()))
+        )
 
     def sum_gear_ratios(self):
         result = []
@@ -63,7 +62,6 @@ class Schematic:
                         possible_numbers.append(number)
                 if len(possible_numbers) == 2:
                     result.append(possible_numbers[0].val * possible_numbers[1].val)
-
         return sum(result)
 
 
@@ -74,13 +72,17 @@ def fill(schematic_input: List[str]):
     for idy, line in enumerate(schematic_input):
         # fill numbers
         matches = finditer(r'\d+', line)
-        for match in matches:
-            numbers.append(Number(Coordinate(match.start(), idy), Coordinate(match.end() - 1, idy),
-                                  int(line[match.start():match.end()])))
+        numbers.extend(
+            Number(Coordinate(match.start(), idy), Coordinate(match.end() - 1, idy),
+                   int(line[match.start():match.end()]))
+            for match in matches
+        )
         # fill symbols
-        for idx, symbol in enumerate(line):
-            if not symbol.isdigit() and symbol != PERIOD:
-                symbols[Coordinate(idx, idy)] = symbol
+        symbols.update(
+            (Coordinate(idx, idy), symbol)
+            for idx, symbol in enumerate(line)
+            if not symbol.isdigit() and symbol != PERIOD
+        )
 
     return numbers, symbols
 
