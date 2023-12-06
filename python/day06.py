@@ -1,4 +1,5 @@
 import fileinput
+from math import ceil, sqrt
 from typing import List
 
 # --- Day 6: Wait For It ---
@@ -17,17 +18,12 @@ def parse(raw_input: List[str], mode: str = "part1") -> tuple[List[int], List[in
     return times, distances
 
 
-def calc_ways_to_beat_record(time, distance) -> int:
-    ways = 0
-    for hold_time in range(time + 1):
-        speed = hold_time
-        remaining_time = time - hold_time
-        total_distance = speed * remaining_time
-
-        if total_distance > distance:
-            ways += 1
-
-    return ways
+def calc_ways_to_beat_record(time, distance, mode: str = "part1") -> int:
+    if mode == "part1":
+        return sum(1 for hold_time in range(time + 1) if hold_time * (time - hold_time) > distance)
+    else:
+        t = ceil((time - sqrt(time ** 2 - 4 * distance)) / 2)
+        return time + 1 - 2 * t
 
 
 def calc_per_race(raw_input: List[str], mode: str = "part1") -> int:
