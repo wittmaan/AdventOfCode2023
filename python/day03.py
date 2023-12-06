@@ -1,10 +1,10 @@
-# --- Day 3: Gear Ratios ---
-# --- Part one ---
-
 import fileinput
 from dataclasses import dataclass
 from re import finditer
 from typing import List, Dict
+
+# --- Day 3: Gear Ratios ---
+# --- Part one ---
 
 ASTERISK = "*"
 PERIOD = '.'
