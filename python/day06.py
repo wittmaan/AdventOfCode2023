@@ -6,15 +6,17 @@ from typing import List
 # --- Part one ---
 
 sample_input = """Time:      7  15   30
-Distance:  9  40  200""".split("\n")
+Distance:  9  40  200""".split(
+    "\n"
+)
 
 
 def parse(raw_input: List[str], mode: str = "part1") -> tuple[List[int], List[int]]:
     times = list(map(int, raw_input[0].split()[1:]))
     distances = list(map(int, raw_input[1].split()[1:]))
     if mode == "part2":
-        times = [int(''.join(map(str, times)))]
-        distances = [int(''.join(map(str, distances)))]
+        times = [int("".join(map(str, times)))]
+        distances = [int("".join(map(str, distances)))]
     return times, distances
 
 
@@ -22,7 +24,7 @@ def calc_ways_to_beat_record(time, distance, mode: str = "part1") -> int:
     if mode == "part1":
         return sum(1 for hold_time in range(time + 1) if hold_time * (time - hold_time) > distance)
     else:
-        t = ceil((time - sqrt(time ** 2 - 4 * distance)) / 2)
+        t = ceil((time - sqrt(time**2 - 4 * distance)) / 2)
         return time + 1 - 2 * t
 
 

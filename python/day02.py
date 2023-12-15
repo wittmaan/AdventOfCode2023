@@ -14,9 +14,11 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green""".split(
 
 sample_input2 = """Game 1: 4 red, 1 green, 15 blue; 6 green, 2 red, 10 blue; 7 blue, 6 green, 4 red; 12 blue, 10 green, 3 red
 Game 2: 3 green, 18 blue; 14 green, 4 red, 2 blue; 3 red, 14 green, 15 blue
-Game 3: 12 green, 2 blue; 9 green; 1 red, 11 blue, 4 green""".split("\n")
+Game 3: 12 green, 2 blue; 9 green; 1 red, 11 blue, 4 green""".split(
+    "\n"
+)
 
-CUBE_COUNTS = {'red': 12, 'green': 13, 'blue': 14}
+CUBE_COUNTS = {"red": 12, "green": 13, "blue": 14}
 
 
 def detect_games(games_input: List[str]):

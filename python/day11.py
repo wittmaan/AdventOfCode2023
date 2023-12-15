@@ -1,8 +1,5 @@
 import fileinput
-from itertools import combinations
 from typing import List
-
-import numpy as np
 
 # --- Day 11: Cosmic Expansion ---
 # --- Part one ---
@@ -21,59 +18,71 @@ sample_input = """...#......
     "\n"
 )
 
-EMPTY_SPACE = '.'
-GALAXY = '#'
+EMPTY_SPACE = "."
+GALAXY = "#"
 
 
 class CosmicExpansion:
-    def __init__(self, dat: List[str], inflation: int = 2):
-        self.universe = CosmicExpansion.expand([list(line.strip()) for line in dat], inflation)
-        self.rows = len(self.universe)
-        self.cols = len(self.universe[0])
-        self.galaxy_numbers = self.assign_numbers()
+    def __init__(self, dat: List[str]):
+        self.galaxy_numbers, self.rows, self.cols, self.empty_rows, self.empty_cols = CosmicExpansion.build(
+            [list(line.strip()) for line in dat]
+        )
 
     @staticmethod
-    def expand(universe, inflation: int = 2):
-        expanded_universe = CosmicExpansion.transpose_matrix(CosmicExpansion.expand_row(universe, inflation))
-        expanded_universe = CosmicExpansion.transpose_matrix(CosmicExpansion.expand_row(expanded_universe, inflation))
-        return expanded_universe
-
-    def assign_numbers(self):
+    def build(universe):
+        rows = len(universe)
+        cols = len(universe[0])
         galaxy_numbers = {}
         current_number = 1
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.universe[i][j] == GALAXY:
+        empty_rows = set()
+        empty_cols = set()
+
+        for j in range(cols):
+            empty_col = True
+            for i in range(rows):
+                actual_row = universe[i]
+                if GALAXY not in actual_row and i not in empty_rows:
+                    empty_rows.add(i)
+                if universe[i][j] == GALAXY:
                     galaxy_numbers[(i, j)] = current_number
                     current_number += 1
-        return galaxy_numbers
+                    empty_col = False
+            if empty_col:
+                empty_cols.add(j)
+
+        return galaxy_numbers, rows, cols, empty_rows, empty_cols
 
     @staticmethod
-    def expand_row(universe, inflation: int = 2):
-        expanded_universe = []
-        for row in universe:
-            if len(set(row)) == 1:
-                expanded_universe.extend([row] * (inflation - 1))
-            expanded_universe.append(row)
-        return expanded_universe
+    def get_min_max(a, b):
+        return (b, a) if a > b else (a, b)
 
-    @staticmethod
-    def transpose_matrix(matrix):
-        transposed = list(map(list, zip(*matrix)))
-        return transposed
+    def sum_of_shortest_paths(self, inflation: int = 2):
+        result = 0
+        galaxies_done = set()
+        for galaxy1 in self.galaxy_numbers.keys():
+            for galaxy2 in self.galaxy_numbers.keys():
+                if galaxy1 == galaxy2 or ((galaxy1, galaxy2) in galaxies_done or (galaxy2, galaxy1) in galaxies_done):
+                    continue
 
-    def print(self):
-        for row in self.universe:
-            print("".join([_ for _ in row]))
+                galaxies_done.add((galaxy1, galaxy2))
 
-    def sum_of_shortest_paths(self):
-        # possible_paths = [_ for _ in combinations(self.galaxy_numbers.keys(), 2)]
-        # manhattan_distances = [abs(x2 - x1) + abs(y2 - y1) for (x1, y1), (x2, y2) in possible_paths]
-        # return sum(manhattan_distances)
-        galaxy_positions = np.array(list(self.galaxy_numbers.keys()))
-        possible_paths = np.array(list(combinations(galaxy_positions, 2)))
-        manhattan_distances = np.sum(np.abs(possible_paths[:, 1] - possible_paths[:, 0]), axis=1)
-        return int(np.sum(manhattan_distances))
+                i1, j1 = galaxy1
+                i2, j2 = galaxy2
+                manhattan_distance = abs(i1 - i2) + abs(j1 - j2)
+
+                mini, maxi = CosmicExpansion.get_min_max(i1, i2)
+                minj, maxj = CosmicExpansion.get_min_max(j1, j2)
+
+                manhattan_distance += sum(1 for empty_row in self.empty_rows if mini < empty_row < maxi) * (
+                    inflation - 1
+                )
+                manhattan_distance += sum(1 for empty_col in self.empty_cols if minj < empty_col < maxj) * (
+                    inflation - 1
+                )
+
+                result += manhattan_distance
+
+        return result
 
 
 assert CosmicExpansion(sample_input).sum_of_shortest_paths() == 374
@@ -87,10 +96,10 @@ print(f"solution part1: {solution_part1}")
 # --- Part two ---
 
 
-assert CosmicExpansion(sample_input, inflation=10).sum_of_shortest_paths() == 1030
-assert CosmicExpansion(sample_input, inflation=100).sum_of_shortest_paths() == 8410
+assert CosmicExpansion(sample_input).sum_of_shortest_paths(inflation=10) == 1030
+assert CosmicExpansion(sample_input).sum_of_shortest_paths(inflation=100) == 8410
 
-solution_part2 = CosmicExpansion(puzzle_input, inflation=1000000).sum_of_shortest_paths()
+solution_part2 = CosmicExpansion(puzzle_input).sum_of_shortest_paths(inflation=1000000)
 
-# assert solution_part1 == 9370588
+assert solution_part2 == 746207878188
 print(f"solution part2: {solution_part2}")

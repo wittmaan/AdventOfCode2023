@@ -8,23 +8,25 @@ sample_input = """32T3K 765
 T55J5 684
 KK677 28
 KTJJT 220
-QQQJA 483""".split("\n")
+QQQJA 483""".split(
+    "\n"
+)
 
 
 def count_ranks(hand: str, mode: str = "part1") -> list[int]:
     if mode == "part1":
         return sorted(Counter(hand).values(), reverse=True)
     else:
-        if 'J' in hand and hand != 'JJJJJ':
-            highest = max(hand.replace('J', ''), key=hand.replace('J', '').count)
-            hand = hand.replace('J', highest)
+        if "J" in hand and hand != "JJJJJ":
+            highest = max(hand.replace("J", ""), key=hand.replace("J", "").count)
+            hand = hand.replace("J", highest)
         return sorted(list(hand.count(c) for c in set(hand)), reverse=True)
 
 
 def map_values_to_ranks(hand: str, mode: str = "part1") -> list[int]:
-    card_values = [str(value) for value in range(2, 10)] + ['T', 'J', 'Q', 'K', 'A']
+    card_values = [str(value) for value in range(2, 10)] + ["T", "J", "Q", "K", "A"]
     if mode != "part1":
-        card_values = ['J'] + card_values
+        card_values = ["J"] + card_values
     return [card_values.index(char) for char in hand]
 
 

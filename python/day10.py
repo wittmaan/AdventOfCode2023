@@ -14,8 +14,7 @@ sample_input = """.....
 
 UP, DOWN, LEFT, RIGHT = DIRECTIONS = (0, -1), (0, 1), (-1, 0), (1, 0)
 
-PIPES = {'|': (UP, DOWN), '-': (LEFT, RIGHT), '7': (LEFT, DOWN),
-         'J': (LEFT, UP), 'L': (UP, RIGHT), 'F': (RIGHT, DOWN)}
+PIPES = {"|": (UP, DOWN), "-": (LEFT, RIGHT), "7": (LEFT, DOWN), "J": (LEFT, UP), "L": (UP, RIGHT), "F": (RIGHT, DOWN)}
 
 
 class Grid:
@@ -27,14 +26,17 @@ class Grid:
     def fill(self, dat: List[str]) -> Tuple[dict, Tuple[int, int]]:
         grid = {}
         starting_position = None
+        si = None
+        sj = None
         for j in range(self.rows):
             for i in range(self.cols):
                 grid[(i, j)] = [(i + di, j + dj) for di, dj in PIPES.get(dat[j][i], ())]
-                if dat[j][i] == 'S':
+                if dat[j][i] == "S":
                     si, sj = starting_position = i, j
 
-        grid[starting_position] = [(si + di, sj + dj) for di, dj in DIRECTIONS
-                                   if starting_position in grid.get((si + di, sj + dj), [])]
+        grid[starting_position] = [
+            (si + di, sj + dj) for di, dj in DIRECTIONS if starting_position in grid.get((si + di, sj + dj), [])
+        ]
         return grid, starting_position
 
     def find_longest_distance(self) -> int:

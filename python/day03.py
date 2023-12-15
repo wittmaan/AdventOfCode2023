@@ -7,7 +7,7 @@ from typing import List, Dict
 # --- Part one ---
 
 ASTERISK = "*"
-PERIOD = '.'
+PERIOD = "."
 
 sample_input = """467..114..
 ...*......
@@ -18,7 +18,9 @@ sample_input = """467..114..
 ..592.....
 ......755.
 ...$.*....
-.664.598..""".split("\n")
+.664.598..""".split(
+    "\n"
+)
 
 
 @dataclass(frozen=True)
@@ -34,10 +36,7 @@ class Number:
     val: int
 
     def is_adjacent_to_symbol(self, symbol: Coordinate):
-        return (
-                self.start.x - 1 <= symbol.x <= self.end.x + 1
-                and self.start.y - 1 <= symbol.y <= self.start.y + 1
-        )
+        return self.start.x - 1 <= symbol.x <= self.end.x + 1 and self.start.y - 1 <= symbol.y <= self.start.y + 1
 
 
 @dataclass
@@ -71,10 +70,11 @@ def fill(schematic_input: List[str]):
 
     for idy, line in enumerate(schematic_input):
         # fill numbers
-        matches = finditer(r'\d+', line)
+        matches = finditer(r"\d+", line)
         numbers.extend(
-            Number(Coordinate(match.start(), idy), Coordinate(match.end() - 1, idy),
-                   int(line[match.start():match.end()]))
+            Number(
+                Coordinate(match.start(), idy), Coordinate(match.end() - 1, idy), int(line[match.start() : match.end()])
+            )
             for match in matches
         )
         # fill symbols
